@@ -86,7 +86,6 @@ function init_chase_exact() {
                     'options' => array(
                         'FALSE' => 'Live Mode',
                         'TRUE' => 'Test Mode',
-                        'powerpay' => 'PowerPay Payment Gateway Emulator'
                     )
                 ),
                 'success_msg' => array(
@@ -107,6 +106,14 @@ function init_chase_exact() {
         public function receipt_page($order_id) {
             echo "<p>" . __('Thank you for your order, please click the button below to pay with Chase E-xact.') . "</p>";
             echo $this->generate_exact_form($order_id);
+        }
+
+        public function process_payment($order_id) {
+            $order = wc_get_order($order_id);
+            return array(
+                'result' => 'success',
+                'redirect' => $order->get_checkout_payment_url(true)
+            );
         }
 
         public function generate_exact_form($order_id) {
