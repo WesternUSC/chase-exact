@@ -126,7 +126,7 @@ function init_chase_exact() {
                 'x_amount' => $order->get_total(),
                 'x_invoice_num' => $order_id,
                 'x_relay_response' => 'TRUE',
-                // 'x_relay_url' => get_site_url() . '/wc-api/' . get_class($this),
+                'x_relay_url' => get_site_url() . '/wc-api/' . get_class($this),
                 'x_fp_sequence' => $x_fp_sequence,
                 'x_fp_hash' => hash_hmac('md5', $this->login_id . '^' . $x_fp_sequence . '^' . $x_fp_timestamp . '^' . $order->get_total() . '^', $this->transaction_key, false),
                 'x_show_form' => 'PAYMENT_FORM',
