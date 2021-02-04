@@ -7,8 +7,6 @@
  * Version: 1.0.0
  */
 
-//if (!class_exists('WooCommerce'))
-//    return;
 
 add_filter('woocommerce_payment_gateways', 'add_chase_exact');
 function add_chase_exact($methods) {
@@ -46,10 +44,14 @@ function init_chase_exact() {
                 $this->api_url = 'https://checkout.e-xact.com/payment';
             }
 
+//            add_action('init', array($this, 'process_exact_response'));
+
             // Save settings
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
 
             add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
+//            add_action('woocommerce_api_wc_' . $this->id, array($this, 'process_exact_response'));
+            add_action('woocommerce_api_wc_chase_exact_gateway', array($this, 'process_exact_response'));
         }
 
         public function init_form_fields() {
@@ -103,11 +105,6 @@ function init_chase_exact() {
             );
         }
 
-        public function receipt_page($order_id) {
-            echo "<p>" . __('Thank you for your order, please click the button below to pay with Chase E-xact.') . "</p>";
-            echo $this->generate_exact_form($order_id);
-        }
-
         public function process_payment($order_id) {
             $order = wc_get_order($order_id);
             return array(
@@ -130,7 +127,7 @@ function init_chase_exact() {
                 'x_fp_sequence' => $x_fp_sequence,
                 'x_fp_hash' => hash_hmac('md5', $this->login_id . '^' . $x_fp_sequence . '^' . $x_fp_timestamp . '^' . $order->get_total() . '^', $this->transaction_key, false),
                 'x_show_form' => 'PAYMENT_FORM',
-                'x_test_request' => 'FALSE',
+                'x_test_request' => $this->api_mode,
                 'x_fp_timestamp' => $x_fp_timestamp,
                 'x_first_name' => $order->get_billing_first_name(),
                 'x_last_name' => $order->get_billing_last_name(),
@@ -161,6 +158,38 @@ function init_chase_exact() {
                 . "<a class='button cancel' href='" . $order->get_cancel_order_url() . "'>" . __('Cancel order and restore cart') . "</a>"
                 . "</form>";
             return $html_form;
+        }
+
+        public function receipt_page($order_id) {
+            echo "<p>" . __('Thank you for your order, please click the button below to pay with Chase E-xact.') . "</p>";
+            echo $this->generate_exact_form($order_id);
+        }
+
+        public function process_exact_response() {
+            global $woocommerce;
+            if (!empty($_POST['x_response_code']) && !empty($_POST['x_invoice_num'])) {
+                try {
+                    $order = wc_get_order($_POST['x_invoice_num']);
+                    if ($_POST['x_response_code'] == 1) {
+                        $order->payment_complete();
+                        $order->add_order_note($this->success_msg . " Transaction ID: " . $_POST['x_trans_id']);
+                    } else {
+                        $order->update_status("failed");
+                        $order->add_order_note($this->fail_msg);
+                    }
+                    $this->redirect(get_site_url() . "/checkout/order-received/" . $order->get_id() . "/?key=" . $order->get_order_key());
+                } catch (Exception $exception) {
+                    $this->redirect(get_site_url() . "/checkout/order-received?msg=Unknown_error_occured");
+                    exit;
+                }
+            } else {
+                $this->redirect(get_site_url() . "/checkout/order-received?msg=Unknown_error_occured");
+            }
+            exit;
+        }
+
+        public function redirect($url) {
+            echo "<html><head><script>window.location='{$url}';</script></head></html>";
         }
     }
 }
