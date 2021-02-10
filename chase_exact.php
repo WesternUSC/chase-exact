@@ -44,13 +44,10 @@ function init_chase_exact() {
                 $this->api_url = 'https://checkout.e-xact.com/payment';
             }
 
-//            add_action('init', array($this, 'process_exact_response'));
-
             // Save settings
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
 
             add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
-//            add_action('woocommerce_api_wc_' . $this->id, array($this, 'process_exact_response'));
             add_action('woocommerce_api_wc_chase_exact_gateway', array($this, 'process_exact_response'));
         }
 
@@ -145,8 +142,6 @@ function init_chase_exact() {
                 'x_ship_to_state' => $order->get_shipping_state(),
                 'x_ship_to_city' => $order->get_shipping_city(),
                 'x_ship_to_zip' => $order->get_shipping_postcode(),
-                // 'x_cancel_url' => $woocommerce->cart->get_checkout_url(),
-                // 'x_cancel_url_text' => 'Cancel Payment'
             );
             $args_input_fields = array();
             foreach ($args as $key => $value) {
