@@ -9,17 +9,22 @@
 
 
 add_filter('woocommerce_payment_gateways', 'add_chase_exact');
-function add_chase_exact($methods) {
+function add_chase_exact($methods)
+{
     $methods[] = 'WC_Chase_Exact_Gateway';
     return $methods;
 }
 
 add_action('plugins_loaded', 'init_chase_exact');
-function init_chase_exact() {
+function init_chase_exact()
+{
     if (!class_exists('WC_Payment_Gateway'))
         return;
-    class WC_Chase_Exact_Gateway extends WC_Payment_Gateway {
-        public function __construct() {
+
+    class WC_Chase_Exact_Gateway extends WC_Payment_Gateway
+    {
+        public function __construct()
+        {
             $this->id = 'chase_exact';
             $this->icon = '';
             $this->has_fields = false;
@@ -48,10 +53,12 @@ function init_chase_exact() {
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
 
             add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
+            add_action('woocommerce_thankyou_' . $this->id, array($this, 'thankyou_page'));
             add_action('woocommerce_api_wc_chase_exact_gateway', array($this, 'process_exact_response'));
         }
 
-        public function init_form_fields() {
+        public function init_form_fields()
+        {
             $this->form_fields = array(
                 'enabled' => array(
                     'title' => __('Enable/Disable'),
@@ -102,7 +109,8 @@ function init_chase_exact() {
             );
         }
 
-        public function process_payment($order_id) {
+        public function process_payment($order_id)
+        {
             $order = wc_get_order($order_id);
             return array(
                 'result' => 'success',
@@ -110,7 +118,8 @@ function init_chase_exact() {
             );
         }
 
-        public function generate_exact_form($order_id) {
+        public function generate_exact_form($order_id)
+        {
             global $woocommerce;
             $order = wc_get_order($order_id);
             $x_fp_sequence = rand(1, 1000);
@@ -155,12 +164,14 @@ function init_chase_exact() {
             return $html_form;
         }
 
-        public function receipt_page($order_id) {
+        public function receipt_page($order_id)
+        {
             echo "<p>" . __('Thank you for your order, please click the button below to pay with Chase E-xact.') . "</p>";
             echo $this->generate_exact_form($order_id);
         }
 
-        public function process_exact_response() {
+        public function process_exact_response()
+        {
             global $woocommerce;
             if (!empty($_POST['x_response_code']) && !empty($_POST['x_invoice_num'])) {
                 try {
@@ -183,8 +194,19 @@ function init_chase_exact() {
             exit;
         }
 
-        public function redirect($url) {
+        public function redirect($url)
+        {
             echo "<html><head><script>window.location='{$url}';</script></head></html>";
+        }
+
+        public function thankyou_page($order_id)
+        {
+            $order = wc_get_order($order_id);
+            if ($order->get_status() == 'completed' || $order->get_status() == 'processing') {
+                echo "<h2 style='color: #46A93F;'>" . $this->success_msg . "</h2>";
+            } else {
+                echo "<h2 style='color: #FF0000;'>" . $this->fail_msg . "</h2>";
+            }
         }
     }
 }
