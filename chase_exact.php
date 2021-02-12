@@ -1,7 +1,7 @@
 <?php
 /*
- * Plugin Name: WooCommerce Chase E-xact Payment Gateway
- * Description: Process payments with Chase E-xact gateway.
+ * Plugin Name: Chase E-xact Payment Gateway for WooCommerce
+ * Description: Extends WooCommerce to process payments with Chase E-xact gateway.
  * Author: Nikolas North (WesternUSC)
  * Author URI: https://github.com/WesternUSC
  * Version: 1.0.0
@@ -62,7 +62,7 @@ function init_chase_exact()
             $this->form_fields = array(
                 'enabled' => array(
                     'title' => __('Enable/Disable'),
-                    'label' => __('Enable Chase E-xact Checkout'),
+                    'label' => __('Enable Chase E-xact Checkout for WooCommerce'),
                     'type' => 'checkbox',
                     'default' => 'no'
                 ),
@@ -70,7 +70,7 @@ function init_chase_exact()
                     'title' => __('Title'),
                     'type' => 'text',
                     'description' => __('This controls the title which the user sees during checkout.'),
-                    'default' => __('Chase E-xact Checkout')
+                    'default' => __('Chase E-xact Checkout for WooCommerce')
                 ),
                 'description' => array(
                     'title' => __('Description'),
