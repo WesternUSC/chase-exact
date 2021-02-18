@@ -52,11 +52,13 @@ function init_chase_exact()
             // Save settings
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
 
+            // Define webhooks
             add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
             add_action('woocommerce_thankyou_' . $this->id, array($this, 'thankyou_page'));
             add_action('woocommerce_api_wc_chase_exact_gateway', array($this, 'process_exact_response'));
         }
 
+        /** Provides options for plugin settings in admin panel. */
         public function init_form_fields()
         {
             $this->form_fields = array(
@@ -109,6 +111,7 @@ function init_chase_exact()
             );
         }
 
+        /** Sends customer to receipt page after placing order. */
         public function process_payment($order_id)
         {
             $order = wc_get_order($order_id);
@@ -118,6 +121,7 @@ function init_chase_exact()
             );
         }
 
+        /** Generates HTML form with payment details to be sent to Chase E-xact */
         public function generate_exact_form($order_id)
         {
             global $woocommerce;
@@ -164,12 +168,14 @@ function init_chase_exact()
             return $html_form;
         }
 
+        /** Extends receipt page with custom details. */
         public function receipt_page($order_id)
         {
             echo "<p>" . __('Thank you for your order, please click the button below to pay with Chase E-xact.') . "</p>";
             echo $this->generate_exact_form($order_id);
         }
 
+        /** Handles response from Chase E-xact. */
         public function process_exact_response()
         {
             global $woocommerce;
@@ -199,6 +205,7 @@ function init_chase_exact()
             echo "<html><head><script>window.location='{$url}';</script></head></html>";
         }
 
+        /** Extends thank you page with custom details. */
         public function thankyou_page($order_id)
         {
             $order = wc_get_order($order_id);
