@@ -2,9 +2,15 @@
 /*
  * Plugin Name: Chase E-xact Payment Gateway for WooCommerce
  * Description: Extends WooCommerce to process payments with Chase E-xact gateway.
- * Author: Nikolas North (WesternUSC)
+ * Author: WesternUSC
  * Author URI: https://github.com/WesternUSC
  * Version: 1.0.0
+ * Requires at least: 5.6
+ * Requires PHP: 7.0
+ * WC requires at least: 4.9
+ * WC tested up to: 5.0
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 
@@ -71,22 +77,24 @@ function init_chase_exact()
                 'title' => array(
                     'title' => __('Title'),
                     'type' => 'text',
-                    'description' => __('This controls the title which the user sees during checkout.'),
+                    'description' => __('Controls the title presented to the customer during checkout.'),
                     'default' => __('Chase E-xact Checkout for WooCommerce')
                 ),
                 'description' => array(
                     'title' => __('Description'),
                     'type' => 'text',
-                    'description' => __('This controls the description which the user sees during checkout.'),
+                    'description' => __('Controls the description presented to the user during checkout.'),
                     'default' => __('Pay securely with credit or debit card through Chase E-xact.')
                 ),
                 'login_id' => array(
                     'title' => __('API Login ID'),
                     'type' => 'text',
+                    'description' => __('Provided by Chase E-xact. Required for verification purposes on their server.')
                 ),
                 'transaction_key' => array(
                     'title' => __('API Transaction Key'),
-                    'type' => 'text'
+                    'type' => 'text',
+                    'description' => __('Provided by Chase E-xact. Required for verification purposes on their server.')
                 ),
                 'api_mode' => array(
                     'title' => __('API Mode'),
@@ -99,14 +107,14 @@ function init_chase_exact()
                 'success_msg' => array(
                     'title' => __('Transaction Success Message'),
                     'type' => 'textarea',
-                    'description' => __('Message to be displayed on successful transaction.'),
-                    'default' => __('Your payment has been processed, thank you.')
+                    'description' => __('Message displayed to customer for a successful transaction.'),
+                    'default' => __('Success.')
                 ),
                 'fail_msg' => array(
                     'title' => __('Transaction Failed Message'),
                     'type' => 'textarea',
-                    'description' => __('Message to be displayed on failed transaction.'),
-                    'default' => __('Your payment has been declined.')
+                    'description' => __('Message displayed to customer for a failed transaction.'),
+                    'default' => __("Your payment has been declined. Please try again by clicking 'Pay' above, and verify payment details are correct.")
                 )
             );
         }
