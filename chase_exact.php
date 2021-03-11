@@ -170,7 +170,7 @@ function init_chase_exact()
             }
             $html_form = "<form action='$this->api_url' method='post' id='exact-payment-form'>"
                 . implode('', $args_input_fields)
-                . "<input type='submit' class='button' id='submit-exact-payment-form' value='" . __('Pay via Chase E-xact') . "'/>"
+                . "<input type='submit' style='margin: 1rem 1rem 1rem 0;' class='button' id='submit-exact-payment-form' value='" . __('Pay via Chase E-xact') . "'/>"
                 . "<a class='button cancel' href='" . $order->get_cancel_order_url() . "'>" . __('Cancel order and restore cart') . "</a>"
                 . "</form>";
             return $html_form;
@@ -179,7 +179,7 @@ function init_chase_exact()
         /** Extends receipt page with custom details. */
         public function receipt_page($order_id)
         {
-            echo "<p>" . __('Thank you for your order, please click the button below to pay with Chase E-xact.') . "</p>";
+            echo "<h3>" . __('Please click below to pay or cancel your order.') . "</h3>";
             echo $this->generate_exact_form($order_id);
         }
 
